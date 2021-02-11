@@ -1,0 +1,13 @@
+API-GATEWAY:
+
+Initial setup:
+http://localhost:8765/CURRENCY-EXCHANGE/currency-exchange/from/USD/to/INR
+http://localhost:8765/CURRENCY-CONVERSION/currency-conversion-feign/from/USD/to/INR/quantity/10
+
+Lowercase:
+spring.cloud.gateway.discovery.locator.lowerCaseServiceId=true
+
+http://localhost:8765/currency-exchange/currency-exchange/from/USD/to/INR
+http://localhost:8765/currency-conversion/currency-conversion-feign/from/USD/to/INR/quantity/10
+
+
