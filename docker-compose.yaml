@@ -13,9 +13,14 @@ services:
             - currency-network
         depends_on: 
             - naming-server
+            - rabbitmq
         environment: 
             EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
             SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+            RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+            SPRING_RABBITMQ_HOST: rabbitmq
+            SPRING_ZIPKIN_SENDER_TYPE: rabbit
+
 
     currency-conversion:
         image: learningmicroservice/mmv2-currency-conversion-service:0.0.1-SNAPSHOT
@@ -29,9 +34,13 @@ services:
             - currency-network
         depends_on: 
             - naming-server
+            - rabbitmq
         environment: 
             EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
             SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+            RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+            SPRING_RABBITMQ_HOST: rabbitmq
+            SPRING_ZIPKIN_SENDER_TYPE: rabbit
     
     api-gateway:
         image: learningmicroservice/mmv2-api-gateway:0.0.1-SNAPSHOT
@@ -45,9 +54,13 @@ services:
             - currency-network
         depends_on: 
             - naming-server
+            - rabbitmq
         environment: 
             EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
             SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+            RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+            SPRING_RABBITMQ_HOST: rabbitmq
+            SPRING_ZIPKIN_SENDER_TYPE: rabbit
 
     naming-server:
         image: learningmicroservice/mmv2-naming-server:0.0.1-SNAPSHOT
@@ -59,19 +72,34 @@ services:
             - "8761:8761"
         networks: 
             - currency-network
+        depends_on: 
+            - rabbitmq
         environment: 
             SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+            RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+            SPRING_RABBITMQ_HOST: rabbitmq
+            SPRING_ZIPKIN_SENDER_TYPE: rabbit
 
     zipkin-server:
         image: openzipkin/zipkin:2.23
-        deploy:
-            resources:
-                limits:
-                    memory: 300M
         ports:
             - "9411:9411"
         networks: 
-            - currency-network         
+            - currency-network
+        depends_on:
+            - rabbitmq
+        environment: 
+            RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+            SPRING_RABBITMQ_HOST: rabbitmq
+            SPRING_ZIPKIN_SENDER_TYPE: rabbit 
+            
+    rabbitmq:
+        image: rabbitmq:management
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+        networks: 
+            - currency-network 
 
 networks: 
     currency-network:
